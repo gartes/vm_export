@@ -1,7 +1,7 @@
 <updates>
     <update>
-        <name>Lib GNZ11</name>
-        <description>Lib GNZ11 Desc</description>
+        <name>PLG_VM_EXPORT</name>
+        <description>PLG VM EXPORT To Exsel</description>
         <type>plugin</type>
         <folder>vmextended</folder>
         <element>vm_export</element>
