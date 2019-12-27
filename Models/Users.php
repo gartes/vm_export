@@ -4,8 +4,8 @@
 	class Users{
 		
 		public $Group_id = 1 ;
-		public $LimitStr = 100 ;
-//		public $LimitStr = 0 ;
+//		public $LimitStr = 100 ;
+		public $LimitStr = 0 ;
 		
 		/**
 		 * Users constructor.
