@@ -4,8 +4,8 @@
 	class Users{
 		
 		public $Group_id = 1 ;
-//		public $LimitStr = 100 ;
-		public $LimitStr = 0 ;
+		public $LimitStr = 100 ;
+//		public $LimitStr = 0 ;
 		
 		/**
 		 * Users constructor.
@@ -49,14 +49,22 @@
 		private function getOrders(){
 			$db = \JFactory::getDbo();
 			$query = $db->getQuery( true ) ;
-			$query->select( ' o.* ,o.virtuemart_order_id AS Order_id , vu.* '  );
+			$query->select( ' o.* ,o.virtuemart_order_id AS Order_id , vu.* , a.*'  );
 			$query->from('#__virtuemart_orders AS o ');
 			$query->leftJoin('#__virtuemart_userinfos AS vu ON o.virtuemart_user_id = vu.virtuemart_user_id') ;
+			$query->leftJoin('#__users AS a ON o.virtuemart_user_id = a.id') ;
+			
+			$whereArr = [
+				$db->quoteName('last_name') . ' <> ' . $db->quote('Олег Николайчук') ,
+				$db->quoteName('last_name') . ' <> ' . $db->quote('Олег Николайчук123123') ,
+				$db->quoteName('last_name') . ' <> ' . $db->quote('Дмитрий Федосеев') ,
+			];
+			$query->where( $whereArr );
 			
 			$query->group('o.virtuemart_order_id') ;
 			
 			$db->setQuery($query , 0 , $this->LimitStr );
-//			$db->setQuery($query  );
+
 			
 			return $db->loadObjectList();
 		}
@@ -344,7 +352,7 @@
 				}
 			}#END FOREACH
 			
-			
+			$uri = \Joomla\CMS\Uri\Uri::getInstance( 'SERVER' );
 			
 			$i = 2 ;
 			foreach( $orders as  $item )
@@ -367,6 +375,18 @@
 				$first_name = $this->getName( $item );
 				$Phone = $this->getPhone( $item );
 				
+				if( $first_name == 'Дмитрий Федосеев' )
+				{
+					
+					echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
+					die(__FILE__ .' '. __LINE__ );
+					
+					continue ;
+				}#END IF
+				
+				
+				
+				
 				try
 				{
 					$sheet->setCellValueByColumnAndRow( 0 , $i ,  $item->virtuemart_order_id );
@@ -374,7 +394,7 @@
 					$sheet->setCellValueByColumnAndRow( 2 , $i ,  $item->order_create_invoice_pass ); # Invoice prefix
 					$sheet->setCellValueByColumnAndRow( 3 , $i ,  '0' ); # Store id
 					$sheet->setCellValueByColumnAndRow( 4 , $i ,  'Benks Shop' ); # Store id
-					$sheet->setCellValueByColumnAndRow( 5 , $i ,  'https://test.protect-sc.ru/' ); # Store id
+					$sheet->setCellValueByColumnAndRow( 5 , $i ,  $uri::base() ); # Store id
 					$sheet->setCellValueByColumnAndRow( 6 , $i ,  $item->virtuemart_user_id ); # Customer id
 					$sheet->setCellValueByColumnAndRow( 7 , $i ,  $this->Group_id ); # Customer group id
 					
@@ -382,7 +402,7 @@
 					
 					$sheet->setCellValueByColumnAndRow( 9 , $i ,  '' ); # Lastname
 					
-					$sheet->setCellValueByColumnAndRow( 10 , $i ,  $item->name ); # Email
+					$sheet->setCellValueByColumnAndRow( 10 , $i ,  $item->email /*$item->name*/ ); # Email
 					$sheet->setCellValueByColumnAndRow( 11 , $i ,  $Phone ); # Telephone
 					$sheet->setCellValueByColumnAndRow( 12 , $i ,  '' ); # Fax
 					
