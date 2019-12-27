@@ -7,7 +7,7 @@
 	<authorUrl>http://your.url.com</authorUrl>
 	<copyright>A copyright</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-	<version>1.0</version>
+	<version>1.1</version>
 	<description>PLG_VM_EXPORT_XML_DESCRIPTION</description>
 
 	<!-- Scripts to run on installation -->
@@ -23,6 +23,8 @@
 	<files>
 		<filename plugin="vm_export">vm_export.php</filename>
 		<folder>language</folder>
+		<folder>Libraries</folder>
+		<folder>Models</folder>
 	</files>
 
 	<!-- Config parameter -->

@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
  * @package   vm_export
  * @since     1.0.0
  */
-class plgSystemVm_export extends CMSPlugin
+class plgVmExtendedVm_export extends vmExtendedPlugin
 {
 	/**
 	 * Application object
@@ -45,7 +45,51 @@ class plgSystemVm_export extends CMSPlugin
 	 * @since  1.0.0
 	 */
 	protected $autoloadLanguage = true;
-
+	
+	/**
+	 * plgVmExtendedVm_export constructor.
+	 *
+	 * @param          $subject
+	 * @param   array  $config
+	 * @since 3.9
+	 */
+	public function __construct (&$subject, $config=array()) {
+		JLoader::registerNamespace(
+			'Plg\Vm_export\Models' ,
+			JPATH_PLUGINS . '/vmextended/vm_export/Models' ,
+			$reset = false , $prepend = false , $type = 'psr4' );
+		
+		parent::__construct($subject, $config);
+	}  // end function
+	
+	/**
+	 * Точка входа для BE Admin
+	 * $controller - index.php?option=com_virtuemart&view={$controller}
+	 * @param   string  $controller
+	 *
+	 * @return True|void
+	 * @since 3.9
+	 */
+	public function onVmAdminController ($controller){
+	
+	}
+	
+	/**
+	 * index.php?option=com_virtuemart&view=vm_export
+	 * 
+	 * @param   string  $controller
+	 *
+	 * @return True|void
+	 */
+	public function onVmSiteController ($controller){
+		
+		$Users = new \Plg\Vm_export\Models\Users();
+		$Users->getUsers();
+		echo'<pre>';print_r( $controller );echo'</pre>'.__FILE__.' '.__LINE__;
+		die(__FILE__ .' '. __LINE__ );
+	}
+	
+	
 	/**
 	 * onAfterInitialise.
 	 *
