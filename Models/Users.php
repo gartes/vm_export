@@ -378,8 +378,8 @@
 				if( $first_name == 'Дмитрий Федосеев' )
 				{
 					
-					echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
-					die(__FILE__ .' '. __LINE__ );
+//					echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
+//					die(__FILE__ .' '. __LINE__ );
 					
 					continue ;
 				}#END IF
