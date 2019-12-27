@@ -47,3 +47,4 @@
 		<server type="extension" enabled="1" priority="1" name="PLG Vm Export">https://raw.githubusercontent.com/gartes/vm_export/master/plg_vm_export.xml</server>
 	</updateservers>
 </extension>
+		<!-- https://github.com/gartes/vm_export/archive/master.zip -->
