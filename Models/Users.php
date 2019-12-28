@@ -4,7 +4,10 @@
 	class Users{
 		
 		public $Group_id = 1 ;
-//		public $LimitStr = 100 ;
+
+		public $offset = 3600 ;
+//		public $LimitStr = 500 ;
+//		public $offset = 0 ;
 		public $LimitStr = 0 ;
 		
 		/**
@@ -26,19 +29,88 @@
 			$db = \JFactory::getDbo();
 			$query = $db->getQuery( true ) ;
 			
-			$query->select( 'a.* , vu.*' );
+			$a_select=[
+				'a.id ',
+				'a.id AS id_users ',
+				'a.name',
+				'a.username',
+				'a.email',
+				'a.registerDate',
+			];
+			$query->select( $a_select );
 			$query->from('#__users AS a');
+			
+			$vu_select =[
+				'vu.virtuemart_user_id',
+				'vu.name',
+				'vu.last_name',
+				'vu.first_name',
+				'vu.middle_name',
+				'vu.phone_1',
+				'vu.phone_2',
+				'vu.address_1',
+				'vu.address_2',
+				'vu.city',
+				'vu.virtuemart_state_id',
+				'vu.virtuemart_country_id',
+				'vu.created_on',
+			];
+			$query->select( $vu_select );
 			$query->leftJoin('#__virtuemart_userinfos AS vu ON a.id = vu.virtuemart_user_id') ;
+			
+			
+//			$query->select( ' o.* ' );
+			$query->leftJoin('#__virtuemart_orders AS o  ON a.id = o.virtuemart_user_id') ;
+			
+			$gl_select =[
+				'gl.glavpunkt_select_servise_type_on',
+				'gl.cityText',
+				'gl.city_id',
+			];
+			$query->select( $gl_select );
+			$query->leftJoin('#__virtuemart_shipment_plg_glavpunkt AS gl  ON o.order_number = gl.order_number') ;
+			
+			$whereArr = [
+//				$db->quoteName('first_name') . ' <> ' . $db->quote('Имя') ,
+//				$db->quoteName('first_name') . ' <> ' . $db->quote('вова') ,
+//				$db->quoteName('first_name') . ' <> ' . $db->quote('Олег Николайчук') ,
+//				$db->quoteName('last_name') . ' <> ' . $db->quote('http://fgaerkhk.ru/') ,
+//				$db->quoteName('last_name') . ' <> ' . $db->quote('Олег Николайчук222') ,
+//				$db->quoteName('phone_1') . ' <> ' . $db->quote('545454') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('baassgyl@mail.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('ddf@ty.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('sad@asd') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('asd@asd') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('rsrif@gmail.com') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('jj@jj.ss') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('nn@nn.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('tresartt@mail.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('zzz@sdsfg.rtye') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('test@ewrwerwrewe.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('dfasjdfsjg@eru.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('123123qwe@rer.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('rttasdbjg@mail.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('325345123@mail.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('12312414@aasdasd.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('rewrwerj@marewr.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('mail@ewrw.ru') ,
+				$db->quoteName('a.username') . ' <> ' . $db->quote('33344222211111112311122331231333') ,
+				$db->quoteName('a.username') . ' <> ' . $db->quote('33344222211111111126666233333') ,
+			];
+			$query->where($whereArr) ;
 			
 			$query->group(' a.id ');
 			
-			$db->setQuery($query);
-			$res = $db->loadObjectList(); 
+			$db->setQuery($query , $this->offset , $this->LimitStr );
+			$res = $db->loadObjectList();
+			
+			
+			
+//			echo'<pre>';print_r( $res );echo'</pre>'.__FILE__.' '.__LINE__;
+//			die(__FILE__ .' '. __LINE__ );
 			
 			$this->getExselList($res);
 
-//			echo'<pre>';print_r( $res );echo'</pre>'.__FILE__.' '.__LINE__;
-//		 	die(__FILE__ .' '. __LINE__ );
 		}
 		
 		/**
@@ -49,13 +121,41 @@
 		private function getOrders(){
 			$db = \JFactory::getDbo();
 			$query = $db->getQuery( true ) ;
-			$query->select( ' o.* ,o.virtuemart_order_id AS Order_id , vu.* , a.*'  );
+			
+			$o_select=[
+				'o.* ',
+				'o.virtuemart_order_id AS Order_id ',
+				
+//				'o.virtuemart_order_id ',
+//				'o.virtuemart_user_id ',
+//				'o.order_number ',
+//				'o.customer_number ',
+//				'o.order_total ',
+//				'o.order_create_invoice_pass ',
+			];
+			$query->select(  $o_select );
 			$query->from('#__virtuemart_orders AS o ');
+			
+			$vu_select=[
+				'vu.*',
+			];
+			$query->select($vu_select);
 			$query->leftJoin('#__virtuemart_userinfos AS vu ON o.virtuemart_user_id = vu.virtuemart_user_id') ;
+			
+			$a_select=[
+				'a.*',
+			];
+			$query->select($a_select);
 			$query->leftJoin('#__users AS a ON o.virtuemart_user_id = a.id') ;
 			
+			$gl_select=[
+				'gl.*',
+			];
+			$query->select($gl_select);
+			$query->leftJoin('#__virtuemart_shipment_plg_glavpunkt AS gl  ON o.order_number = gl.order_number') ;
+			
 			$whereArr = [
-				$db->quoteName('last_name') . ' <> ' . $db->quote('Олег Николайчук') ,
+				/*$db->quoteName('last_name') . ' <> ' . $db->quote('Олег Николайчук') ,
 				$db->quoteName('last_name') . ' <> ' . $db->quote('Олег Николайчук123123') ,
 				$db->quoteName('last_name') . ' <> ' . $db->quote('Дмитрий Федосеев') ,
 				$db->quoteName('last_name') . ' <> ' . $db->quote('Федосеев') ,
@@ -63,7 +163,8 @@
 				$db->quoteName('last_name') . ' <> ' . $db->quote('Ленин') ,
 				$db->quoteName('last_name') . ' <> ' . $db->quote('Ленинaaaaaa') ,
 				$db->quoteName('last_name') . ' <> ' . $db->quote('фывфыв') ,
-				$db->quoteName('a.email') . ' <> ' . $db->quote('sad.net@yandex.ua') ,
+				*/
+				/*$db->quoteName('a.email') . ' <> ' . $db->quote('sad.net@yandex.ua') ,
 				$db->quoteName('a.email') . ' <> ' . $db->quote('2132@re.ru') ,
 				$db->quoteName('a.email') . ' <> ' . $db->quote('23423@rer.ru') ,
 				$db->quoteName('a.email') . ' <> ' . $db->quote('1231231212test@ru.ru') ,
@@ -88,16 +189,22 @@
 				$db->quoteName('a.email') . ' <> ' . $db->quote('qwrewr345345345@4234324.ru') ,
 				$db->quoteName('a.email') . ' <> ' . $db->quote('asdasdasd@213123123126456456.ru') ,
 				$db->quoteName('a.email') . ' <> ' . $db->quote('32-0549364589076456@1244355.ru') ,
-				$db->quoteName('a.email') . ' <> ' . $db->quote('sad.net@yandex.ru') ,
+				$db->quoteName('a.email') . ' <> ' . $db->quote('sad.net@yandex.ru') ,*/
+				
+//				order_status
+				$db->quoteName('order_status') . ' <> ' . $db->quote('X') ,
 			];
 			$query->where( $whereArr );
 			
-			$query->group('o.virtuemart_order_id') ;
+			$query->group(' o.virtuemart_order_id ') ;
 			
-			$db->setQuery($query , 0 , $this->LimitStr );
-
+			$db->setQuery($query , $this->offset , $this->LimitStr );
 			
-			return $db->loadObjectList();
+			$res = $db->loadObjectList();
+			
+//			echo'<pre>';print_r( $res );echo'</pre>'.__FILE__.' '.__LINE__;
+//			die(__FILE__ .' '. __LINE__ );
+			return $res;
 		}
 		
 		private function getOrdersProduct(){
@@ -105,6 +212,12 @@
 			$query = $db->getQuery( true ) ;
 			$query->select( ' p.* '  );
 			$query->from('#__virtuemart_order_items AS p ');
+			
+//			order_status
+			$whereArr = [
+				$db->quoteName('order_status') . ' <> ' . $db->quote('X') ,
+			];
+			$query->where($whereArr);
 			
 			$db->setQuery($query , 0 , $this->LimitStr );
 			return $db->loadObjectList();
@@ -128,30 +241,47 @@
 			// Выравнивание текста
 			$sheet->getStyle('A1')->getAlignment()->setHorizontal( \PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 			
-			// Вставляем текст в ячейку A2
-			$sheet->setCellValue("B1", 'Group id');
-			$sheet->setCellValue("C1", 'Store id');
-			$sheet->setCellValue("D1", 'Address id');
-			$sheet->setCellValue("E1", 'Language id');
-			$sheet->setCellValue("F1", 'First name');
-			$sheet->setCellValue("G1", 'Last name');
-			$sheet->setCellValue("H1", 'Email');
-			$sheet->setCellValue("I1", 'Telephone');
-			$sheet->setCellValue("J1", 'Fax');
-			$sheet->setCellValue("K1", 'Custom field');
-			$sheet->setCellValue("L1", 'Password');
-			$sheet->setCellValue("M1", 'Salt');
-			$sheet->setCellValue("N1", 'Newsletter');
-			$sheet->setCellValue("O1", 'Safe');
-			$sheet->setCellValue("P1", 'Cart');
-			$sheet->setCellValue("Q1", 'Wish list');
-			$sheet->setCellValue("R1", 'IP');
-			$sheet->setCellValue("S1", 'Token');
-			$sheet->setCellValue("T1", 'Code');
-			$sheet->setCellValue("U1", 'Status');
-			$sheet->setCellValue("V1", 'Date added');
-			$sheet->setCellValue("W1", 'Deleted');
 			
+			try
+			{
+				// Code that may throw an Exception or Error.
+				// Вставляем текст в ячейку A2
+				$sheet->setCellValue( "B1" , 'Group id' );
+				$sheet->setCellValue( "C1" , 'Store id' );
+				$sheet->setCellValue( "D1" , 'Address id' );
+				$sheet->setCellValue( "E1" , 'Language id' );
+				$sheet->setCellValue( "F1" , 'First name' );
+				$sheet->setCellValue( "G1" , 'Last name' );
+				$sheet->setCellValue( "H1" , 'Email' );
+				$sheet->setCellValue( "I1" , 'Telephone' );
+				$sheet->setCellValue( "J1" , 'Fax' );
+				$sheet->setCellValue( "K1" , 'Custom field' );
+				$sheet->setCellValue( "L1" , 'Password' );
+				$sheet->setCellValue( "M1" , 'Salt' );
+				$sheet->setCellValue( "N1" , 'Newsletter' );
+				$sheet->setCellValue( "O1" , 'Safe' );
+				$sheet->setCellValue( "P1" , 'Cart' );
+				$sheet->setCellValue( "Q1" , 'Wish list' );
+				$sheet->setCellValue( "R1" , 'IP' );
+				$sheet->setCellValue( "S1" , 'Token' );
+				$sheet->setCellValue( "T1" , 'Code' );
+				$sheet->setCellValue( "U1" , 'Status' );
+				$sheet->setCellValue( "V1" , 'Date added' );
+				$sheet->setCellValue( "W1" , 'Deleted' );
+			}
+			catch( \Exception $e )
+			{
+				// Executed only in PHP 5, will not be reached in PHP 7
+				echo 'Выброшено исключение: ' , $e->getMessage() , "\n";
+			}
+			catch( \Throwable $e )
+			{
+				// Executed only in PHP 7, will not match in PHP 5
+				echo 'Выброшено исключение: ' , $e->getMessage() , "\n";
+				echo '<pre>';
+				print_r( $e );
+				echo '</pre>' . __FILE__ . ' ' . __LINE__;
+			}
 			
 			
 			// Объединяем ячейки
@@ -170,12 +300,9 @@
 //					die(__FILE__ .' '. __LINE__ );
 				}#END IF
 				
-				
-				
-				
 				try
 				{
-					$sheet->setCellValueByColumnAndRow( 0 , $i , $item->id ); #Customer ID
+					$sheet->setCellValueByColumnAndRow( 0 , $i , $item->id_users ); #Customer ID
 					$sheet->setCellValueByColumnAndRow( 1 , $i , $this->Group_id ); #Group id
 					$sheet->setCellValueByColumnAndRow( 2 , $i , 0 ); #Store id
 					$sheet->setCellValueByColumnAndRow( 3 , $i , $iUser+1 ); #Address id
@@ -220,7 +347,7 @@
 			$sheet = $xls->getActiveSheet();
 			// Подписываем лист
 			$sheet->setTitle('Шаг2-Адреса Юзеров');
-			
+			# Заголовки
 			$headArr = [
 				'Address id',
 				'Customer id',
@@ -241,32 +368,30 @@
 				
 			}#END FOREACH
 			
+			
+			
 			$i = 2 ;
 			foreach( $res as $iUser => $item )
 			{
-//				Москва
-//				Санкт-Петербург
-				$ZoneID = 2761 ;
-				if( stristr($item->city, 'Санкт-Петербург') )
-				{
-					$ZoneID = 2785 ;
-				}else{
-					$item->city = 'Москва' ;
-				}#END IF
-				
 				$first_name = $this->getName( $item );
 				
-				if( $item->id == 680 )
+				
+				if( $first_name == 'Олег Николайчук' )
 				{
 //					echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
 //					die(__FILE__ .' '. __LINE__ );
 				}#END IF
 				
+				$retCity = $this->getCity($item);
+				
+				
+				
+				
 				
 				try
 				{
 					$sheet->setCellValueByColumnAndRow( 0 , $i , $iUser + 1 );
-					$sheet->setCellValueByColumnAndRow( 1 , $i , $item->id );
+					$sheet->setCellValueByColumnAndRow( 1 , $i , $item->id_users );
 					$sheet->setCellValueByColumnAndRow( 2 , $i , $first_name );   #First name
 					
 					$sheet->setCellValueByColumnAndRow( 3 , $i , '' );                  #Last name
@@ -277,8 +402,11 @@
 					$sheet->setCellValueByColumnAndRow( 6 , $i , '' );#Address 2
 //					$sheet->setCellValueByColumnAndRow( 7 , $i , $item->zip );#Postcode
 					$sheet->setCellValueByColumnAndRow( 7 , $i , '' );#Postcode
-					$sheet->setCellValueByColumnAndRow( 8 , $i , $item->city );#City
-					$sheet->setCellValueByColumnAndRow( 9 , $i ,  $ZoneID );#Zone id
+					
+					$sheet->setCellValueByColumnAndRow( 8 , $i , $retCity['city'] );#City
+					$sheet->setCellValueByColumnAndRow( 9 , $i ,  $retCity['ZoneID'] );#Zone id
+					
+					
 					$sheet->setCellValueByColumnAndRow( 10 , $i ,  '176' );#Country id
 					$sheet->setCellValueByColumnAndRow( 11 , $i ,  '0' );#Deleted
 				}
@@ -291,6 +419,7 @@
 			
 			#### Шаг3 - Заказы Юзеров ############################################
 			$orders = $this->getOrders();
+			
 			
 			
 			try
@@ -389,34 +518,16 @@
 			foreach( $orders as  $item )
 			{
 				
-				$ZoneID = 2761 ;
-				if( stristr($item->city, 'Санкт-Петербург') )
-				{
-					$ZoneID = 2785 ;
-				}else{
-					$item->city = 'Москва' ;
-				}#END IF
+				$retCity = $this->getCity($item);
 				
-				if( $item->virtuemart_order_id == 80 )
+				if( $item->email == 'arkadijgulaev720@gmail.com' )
 				{
-//					echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
-//					die(__FILE__ .' '. __LINE__ );
+					echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
+					die(__FILE__ .' '. __LINE__ );
 				}#END IF
 				
 				$first_name = $this->getName( $item );
 				$Phone = $this->getPhone( $item );
-				
-				if( $first_name == 'Дмитрий Федосеев' )
-				{
-					
-//					echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
-//					die(__FILE__ .' '. __LINE__ );
-					
-					continue ;
-				}#END IF
-				
-				
-				
 				
 				try
 				{
@@ -440,15 +551,15 @@
 					$sheet->setCellValueByColumnAndRow( 14 , $i ,  $first_name );               # Payment firstname
 					$sheet->setCellValueByColumnAndRow( 15 , $i ,  '' );                        # Payment lastname
 					
-					$sheet->setCellValueByColumnAndRow( 19 , $i ,  $item->city ); # Fax
+					$sheet->setCellValueByColumnAndRow( 19 , $i ,  $retCity['city'] );          # Payment city
 					
 					$sheet->setCellValueByColumnAndRow( 20 , $i ,  '' );                        # Payment postcode
 					$sheet->setCellValueByColumnAndRow( 21 , $i ,  'Российская Федерация' );    # Payment country
 					$sheet->setCellValueByColumnAndRow( 22 , $i ,  '176' );                     # Payment country id
-					$sheet->setCellValueByColumnAndRow( 23 , $i ,  $item->city );               # Payment zone
+					$sheet->setCellValueByColumnAndRow( 23 , $i ,  $retCity['city'] );               # Payment zone
 					
 					
-					$sheet->setCellValueByColumnAndRow( 24 , $i ,  $ZoneID );                   # Payment zone id
+					$sheet->setCellValueByColumnAndRow( 24 , $i ,  $retCity['ZoneID'] );                   # Payment zone id
 					
 					$sheet->setCellValueByColumnAndRow( 25 , $i ,  '' );                        # Payment address format
 					$sheet->setCellValueByColumnAndRow( 26 , $i ,  '[]' );                      # Payment custom field
@@ -459,12 +570,14 @@
 					$sheet->setCellValueByColumnAndRow( 29 , $i ,  $first_name );          # Shipping firstname
 					$sheet->setCellValueByColumnAndRow( 30 , $i ,  '');                    # Shipping lastname
 					
-					$sheet->setCellValueByColumnAndRow( 34 , $i ,  $item->city );                # Shipping city
+					$sheet->setCellValueByColumnAndRow( 34 , $i ,  $retCity['city'] );                # Shipping city
 					$sheet->setCellValueByColumnAndRow( 35 , $i ,  '' );                         # Shipping postcode
 					$sheet->setCellValueByColumnAndRow( 36 , $i ,  'Российская Федерация' );     # Shipping country
 					$sheet->setCellValueByColumnAndRow( 37 , $i ,  '176' );                      # Shipping country id
-					$sheet->setCellValueByColumnAndRow( 38 , $i ,  $item->city );                # Shipping zone
-					$sheet->setCellValueByColumnAndRow( 39 , $i ,  $ZoneID );                    # Shipping zone id
+					
+					$sheet->setCellValueByColumnAndRow( 38 , $i ,  $retCity['city']  );          # Shipping zone
+					$sheet->setCellValueByColumnAndRow( 39 , $i ,  $retCity['ZoneID'] );         # Shipping zone id
+					
 					$sheet->setCellValueByColumnAndRow( 40 , $i ,  '' );                         # Shipping address format
 					$sheet->setCellValueByColumnAndRow( 41 , $i ,  '[]' );                       # Shipping custom field
 					$sheet->setCellValueByColumnAndRow( 42 , $i ,  'Главпункт - самовывоз' ); # Shipping method
@@ -540,6 +653,14 @@
 			$i = 2 ;
 			foreach( $resOrdersProduct as  $item )
 			{
+				
+//				echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
+//				die(__FILE__ .' '. __LINE__ );
+				
+				if( empty( $item->order_item_name ) )
+				{
+					continue ;
+				}#END IF
 				
 				try
 				{
@@ -683,6 +804,75 @@
 		private function getPhone ( $item )
 		{
 			return ( !empty( $item->phone_1 ) ? $item->phone_1 : $item->phone_2 );
+		}
+		
+		/**
+		 * @param $item
+		 *
+		 * @return array
+		 * @since 3.9
+		 */
+		private function getCity ( $item )
+		{
+			$item->city = trim( $item->city );
+			
+			//				Москва
+			//				Санкт-Петербург
+			$retCity = [];
+			$retCity['ZoneID'] = 2761;
+			$retCity['city'] = 'Москва';
+			if( stristr( $item->city , 'Санкт-Петербург' ) )
+			{
+				$retCity['ZoneID'] = 2785;
+				$retCity['city'] = 'Санкт-Петербург' ;
+			}
+			else
+			{
+				if( empty( $item->city ) )
+				{
+					switch($item->glavpunkt_select_servise_type_on){
+						case 'MSK':
+							$retCity['city'] = 'Москва';
+							$retCity['ZoneID'] = 2761;
+							break ;
+						
+						case 'SPB':
+							$retCity['ZoneID'] = 2785;
+							$retCity['city'] = 'Санкт-Петербург' ;
+							break ;
+						default:
+							$retCity['city'] = 'Москва';
+							$retCity['ZoneID'] = 2761;
+					}
+				}#END IF
+				
+			}#END IF
+			
+			
+			
+			
+			$stopArr = [
+				'Комсомольск-на-Амуре',
+				'Ростов-на-Дону',
+				'Нижний Новгород',
+			];
+			$stopArrid_users = [
+				'688',
+				'689',
+			];
+			$stopArrFirst_name = [
+				'Лесниченко Дмитрий Александрович',
+			];
+			/*if( !empty($item->glavpunkt_select_servise_type_on) && !in_array($item->city , $stopArr) && !in_array($item->id_users , $stopArrid_users) && !in_array($item->first_name , $stopArrFirst_name)  )
+			{
+//				echo'<pre>';print_r( $retCity );echo'</pre>'.__FILE__.' '.__LINE__;
+//				echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
+//				die(__FILE__ .' '. __LINE__ );
+			}#END IF*/
+			
+			
+			
+			return $retCity;
 		}
 		
 		
