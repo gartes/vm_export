@@ -193,6 +193,7 @@
 				
 //				order_status
 				$db->quoteName('order_status') . ' <> ' . $db->quote('X') ,
+//				$db->quoteName('order_create_invoice_pass') . ' = ' . $db->quote('kjg1Wqgt') ,
 			];
 			$query->where( $whereArr );
 			
@@ -202,8 +203,8 @@
 			
 			$res = $db->loadObjectList();
 			
-//			echo'<pre>';print_r( $res );echo'</pre>'.__FILE__.' '.__LINE__;
-//			die(__FILE__ .' '. __LINE__ );
+			echo'<pre>';print_r( $res );echo'</pre>'.__FILE__.' '.__LINE__;
+			die(__FILE__ .' '. __LINE__ );
 			return $res;
 		}
 		
@@ -531,7 +532,7 @@
 				
 				try
 				{
-					$sheet->setCellValueByColumnAndRow( 0 , $i ,  $item->virtuemart_order_id );
+					$sheet->setCellValueByColumnAndRow( 0 , $i ,  $item->Order_id );
 					$sheet->setCellValueByColumnAndRow( 1 , $i ,  '0' );
 					$sheet->setCellValueByColumnAndRow( 2 , $i ,  $item->order_create_invoice_pass ); # Invoice prefix
 					$sheet->setCellValueByColumnAndRow( 3 , $i ,  '0' ); # Store id
