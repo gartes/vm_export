@@ -203,8 +203,8 @@
 			
 			$res = $db->loadObjectList();
 			
-			echo'<pre>';print_r( $res );echo'</pre>'.__FILE__.' '.__LINE__;
-			die(__FILE__ .' '. __LINE__ );
+//			echo'<pre>';print_r( $res );echo'</pre>'.__FILE__.' '.__LINE__;
+//			die(__FILE__ .' '. __LINE__ );
 			return $res;
 		}
 		
