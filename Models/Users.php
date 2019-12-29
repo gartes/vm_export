@@ -745,14 +745,14 @@ X = order_total * 100% / Y = До целого числа = 1%
 				if( in_array( $first_name , $StopFirst_name) ) continue ;
 				
 				# Order_id 3723
-				if( (int)$item->Order_id == 3731  )
+				if( (int)$item->Order_id == 8836  )
 				{
 					
 					
 					/*$Y =  $item->order_salesPrice - $item->order_total  ;
 					if( $Y > 0 )
 					{
-						$X = ( $item->order_salesPrice / $Y ) / 100;
+						$X  = 100 - ($item->order_total / ( $item->order_salesPrice/100 )) ;
 					}
 					echo'<pre>';print_r( 'Y = '. $Y  );echo'</pre>'.__FILE__.' '.__LINE__;
 					echo'<pre>';print_r( 'ceil(Y) = '.ceil($Y) );echo'</pre>'.__FILE__.' '.__LINE__;
@@ -842,7 +842,8 @@ X = order_total * 100% / Y = До целого числа = 1%
 								$Y =  $item->order_salesPrice - $item->order_total  ;
 								if( $Y > 0 ){
 									
-									$X  =  ($item->order_salesPrice / $Y )/100    ;
+									$X  = 100 - ($item->order_total / ( $item->order_salesPrice/100 )) ;
+									// $X  =  ($item->order_salesPrice / $Y )/100    ;
 									
 									$sheet->setCellValueByColumnAndRow( 0 , $str , $Order_total_id ); # Order total id
 									$sheet->setCellValueByColumnAndRow( 1 , $str , $item->Order_id ); # Order id
