@@ -843,7 +843,11 @@ X = order_total * 100% / Y = До целого числа = 1%
 								if( $Y > 0 ){
 									
 									$X  = 100 - ($item->order_total / ( $item->order_salesPrice/100 )) ;
-									// $X  =  ($item->order_salesPrice / $Y )/100    ;
+								
+									
+									
+									
+									
 									
 									$sheet->setCellValueByColumnAndRow( 0 , $str , $Order_total_id ); # Order total id
 									$sheet->setCellValueByColumnAndRow( 1 , $str , $item->Order_id ); # Order id
