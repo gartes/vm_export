@@ -84,7 +84,8 @@ class plgVmExtendedVm_export extends vmExtendedPlugin
 	public function onVmSiteController ($controller){
 		
 		$Users = new \Plg\Vm_export\Models\Users();
-		$Users->getUsers();
+		$res = $Users->getUsers();
+		$Users->getExselList($res);
 		echo'<pre>';print_r( $controller );echo'</pre>'.__FILE__.' '.__LINE__;
 		die(__FILE__ .' '. __LINE__ );
 	}

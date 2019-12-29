@@ -5,9 +5,9 @@
 		
 		public $Group_id = 1 ;
 
-		public $offset = 3600 ;
-//		public $LimitStr = 500 ;
-//		public $offset = 0 ;
+//		public $offset = 2200 ;
+//		public $LimitStr = 100 ;
+		public $offset = 0 ;
 		public $LimitStr = 0 ;
 		
 		/**
@@ -104,13 +104,12 @@
 			$db->setQuery($query , $this->offset , $this->LimitStr );
 			$res = $db->loadObjectList();
 			
-			
+//			$res = [];
 			
 //			echo'<pre>';print_r( $res );echo'</pre>'.__FILE__.' '.__LINE__;
 //			die(__FILE__ .' '. __LINE__ );
 			
-			$this->getExselList($res);
-
+			return $res ;
 		}
 		
 		/**
@@ -191,9 +190,13 @@
 				$db->quoteName('a.email') . ' <> ' . $db->quote('32-0549364589076456@1244355.ru') ,
 				$db->quoteName('a.email') . ' <> ' . $db->quote('sad.net@yandex.ru') ,*/
 				
+//				$db->quoteName('first_name') . ' <> ' . $db->quote('Олег Николайчук') ,
+//				$db->quoteName('last_name') . ' <> ' . $db->quote('Олег Николайчук') ,
+				
 //				order_status
 				$db->quoteName('order_status') . ' <> ' . $db->quote('X') ,
-//				$db->quoteName('order_create_invoice_pass') . ' = ' . $db->quote('kjg1Wqgt') ,
+				
+//				$db->quoteName('o.virtuemart_order_id') . ' = ' . $db->quote('2230') ,
 			];
 			$query->where( $whereArr );
 			
@@ -225,7 +228,28 @@
 		}
 		
 		
-		private function getExselList($res){
+		public function getExselList($res){
+			$StopFirst_name = [
+				'Олег Николайчук',
+				'Василий Пупкич',
+				'тест тест тест',
+				'Testec test',
+				'фывфывwwqqasasasasasa',
+				'фывпрапрапрапрапрфыв',
+				'Ленинaaaaaa',
+				'Тест тестовый',
+				'фывфывssdasd',
+				'фывфыв',
+				'Николайчук Олег Леонидович',
+				'GGEWR ASD',
+				'Test Test',
+				'wdcvssxc павапм',
+				'ejejfijd wififudj',
+				'аоаовл клаомлм',
+				'sjdjdjdjd dhdhdj',
+			];
+			
+			
 			// Создаем объект класса PHPExcel
 			$xls = new \PHPExcel();
 			// Устанавливаем индекс активного листа
@@ -241,8 +265,7 @@
 			$sheet->getStyle('A1')->getFill()->getStartColor()->setRGB('EEEEEE');
 			// Выравнивание текста
 			$sheet->getStyle('A1')->getAlignment()->setHorizontal( \PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-			
-			
+			# Заголовки
 			try
 			{
 				// Code that may throw an Exception or Error.
@@ -292,14 +315,8 @@
 			foreach( $res as $iUser => $item )
 			{
 				$first_name = $this->getName( $item );
-				
 				$Phone = $this->getPhone( $item );
-				
-				if( $item->id == 704 )
-				{
-//					echo'<pre>';print_r($item    );echo'</pre>'.__FILE__.' '.__LINE__;
-//					die(__FILE__ .' '. __LINE__ );
-				}#END IF
+				if( in_array( $first_name , $StopFirst_name) ) continue ;
 				
 				try
 				{
@@ -336,9 +353,6 @@
 //				echo'<pre>';print_r( $item->city );echo'</pre>'.__FILE__.' '.__LINE__;
 			}#END FOREACH
 			
-			
-			
-			
 			### Шаг2-Адреса Юзеров #################################
 			$xls->getActiveSheet();
 			$sheet = $xls->createSheet(1);
@@ -369,21 +383,13 @@
 				
 			}#END FOREACH
 			
-			
-			
 			$i = 2 ;
 			foreach( $res as $iUser => $item )
 			{
+				$retCity = $this->getCity($item);
 				$first_name = $this->getName( $item );
 				
-				
-				if( $first_name == 'Олег Николайчук' )
-				{
-//					echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
-//					die(__FILE__ .' '. __LINE__ );
-				}#END IF
-				
-				$retCity = $this->getCity($item);
+				if( in_array( $first_name , $StopFirst_name) ) continue ;
 				
 				
 				
@@ -421,8 +427,6 @@
 			#### Шаг3 - Заказы Юзеров ############################################
 			$orders = $this->getOrders();
 			
-			
-			
 			try
 			{
 				$xls->getActiveSheet();
@@ -437,7 +441,6 @@
 			catch( \PHPExcel_Exception $e )
 			{
 			}
-			
 			
 			$headArr = [
 				'Order id',
@@ -515,11 +518,17 @@
 			
 			$uri = \Joomla\CMS\Uri\Uri::getInstance( 'SERVER' );
 			
+			
+			
 			$i = 2 ;
 			foreach( $orders as  $item )
 			{
 				
 				$retCity = $this->getCity($item);
+				$first_name = $this->getName( $item );
+				$Phone = $this->getPhone( $item );
+				
+				if( in_array( $first_name , $StopFirst_name) ) continue ;
 				
 				if( $item->email == 'arkadijgulaev720@gmail.com' )
 				{
@@ -527,8 +536,10 @@
 					die(__FILE__ .' '. __LINE__ );
 				}#END IF
 				
-				$first_name = $this->getName( $item );
-				$Phone = $this->getPhone( $item );
+				
+				
+				
+				
 				
 				try
 				{
@@ -606,9 +617,6 @@
 				}
 				$i++ ;
 			}
-			
-			
-			
 			
 			### Шаг4-Товары в заказах #######################################
 			try
@@ -711,49 +719,163 @@
 				}
 			}#END FOREACH
 			
-			$fieldArr = [ 'sub_total' , 'shipping' , 'tax' , 'total' , ];
+			$fieldArr = [ 'sub_total' , 'shipping' /*, 'tax'*/ , 'discounts', 'total' , ];
 			$str = 2 ;
 			$Order_total_id = 1 ;
+			
+			
+			
+//			echo'<pre>';print_r( $orders[299] );echo'</pre>'.__FILE__.' '.__LINE__;
+//			die(__FILE__ .' '. __LINE__ );
+
+/*
+			
+			order_billDiscountAmount - order_discount
+ABS(-230,70 - 200) = 30.70 ( Y )
+X = order_total * 100% / Y = До целого числа = 1%
+			
+			
+			*/
+   
+//			echo'<pre>';print_r( $orders );echo'</pre>'.__FILE__.' '.__LINE__;
+//			die(__FILE__ .' '. __LINE__ );
 			foreach( $orders as $i => $item )
 			{
+				$first_name = $this->getName( $item );
+				if( in_array( $first_name , $StopFirst_name) ) continue ;
+				
+				# Order_id 3723
+				if( (int)$item->Order_id == 3731  )
+				{
+					
+					
+					/*$Y =  $item->order_salesPrice - $item->order_total  ;
+					if( $Y > 0 )
+					{
+						$X = ( $item->order_salesPrice / $Y ) / 100;
+					}
+					echo'<pre>';print_r( 'Y = '. $Y  );echo'</pre>'.__FILE__.' '.__LINE__;
+					echo'<pre>';print_r( 'ceil(Y) = '.ceil($Y) );echo'</pre>'.__FILE__.' '.__LINE__;
+					
+					echo'<pre>';print_r( 'X = '. $X  );echo'</pre>'.__FILE__.' '.__LINE__;
+					echo'<pre>';print_r( 'ceil(X)  = '. ceil($X) );echo'</pre>'.__FILE__.' '.__LINE__;
+					echo'<pre>';print_r( 'round(X)  = '. round($X) );echo'</pre>'.__FILE__.' '.__LINE__;
+					
+					
+					echo'<pre>';print_r( 'Order_id '.$item->Order_id );echo'</pre>'.__FILE__.' '.__LINE__;
+					echo'<pre>';print_r( 'order_total '.$item->order_total );echo'</pre>'.__FILE__.' '.__LINE__;
+					echo'<pre>';print_r( 'order_salesPrice '.$item->order_salesPrice );echo'</pre>'.__FILE__.' '.__LINE__;
+					echo'<pre>';print_r( 'order_discountAmount '.$item->order_discountAmount );echo'</pre>'.__FILE__.' '.__LINE__;
+					echo'<pre>';print_r( 'order_billDiscountAmount '.$item->order_billDiscountAmount );echo'</pre>'.__FILE__.' '.__LINE__;
+					echo'<pre>';print_r( 'order_shipment '. $item->order_shipment );echo'</pre>'.__FILE__.' '.__LINE__;
+					echo'<pre>';print_r( 'order_discount '. (int)$item->order_discount );echo'</pre>'.__FILE__.' '.__LINE__;
+					
+					
+					echo'<pre>';print_r( 'order_total / 100 == '. $item->order_total / 100  );echo'</pre>'.__FILE__.' '.__LINE__;
+					
+					echo'<pre>';print_r( 'order_billDiscountAmount - order_discount == '. $item->order_discount );echo'</pre>'.__FILE__.' '.__LINE__;
+					
+					echo'<pre>';print_r( $orders[$i] );echo'</pre>'.__FILE__.' '.__LINE__;
+					
+					
+					
+					die(__FILE__ .' '. __LINE__ );*/
+					
+					
+				}#END IF
+//				echo'<pre>';print_r( $item->order_discount );echo'</pre>'.__FILE__.' '.__LINE__;
+//				die(__FILE__ .' '. __LINE__ );
 				
 				foreach( $fieldArr as $id => $field )
 				{
 					try
 					{
-						$sheet->setCellValueByColumnAndRow( 0 , $str , $Order_total_id ); # Order total id
-						$sheet->setCellValueByColumnAndRow( 1 , $str , $item->virtuemart_order_id ); # Order id
-						$sheet->setCellValueByColumnAndRow( 2 , $str , $field ); # Code
-						
 						switch($field){
 							case 'sub_total':
+								$sheet->setCellValueByColumnAndRow( 0 , $str , $Order_total_id ); # Order total id
+								$sheet->setCellValueByColumnAndRow( 1 , $str , $item->Order_id ); # Order id
+								$sheet->setCellValueByColumnAndRow( 2 , $str , $field ); # Code
 								$sheet->setCellValueByColumnAndRow( 3 , $str , 'Предварительная стоимость' ); # Title
-								$sheet->setCellValueByColumnAndRow( 4 , $str , $item->order_total ); # Value
+//								$sheet->setCellValueByColumnAndRow( 4 , $str , $item->order_total ); # Value
+								$sheet->setCellValueByColumnAndRow( 4 , $str , $item->order_salesPrice ); # Value
+								$sheet->setCellValueByColumnAndRow( 5 , $str , $id ); # Title
+								$str ++;
+								$Order_total_id++;
+								
 								break ;
 							case 'shipping':
+								$sheet->setCellValueByColumnAndRow( 0 , $str , $Order_total_id ); # Order total id
+								$sheet->setCellValueByColumnAndRow( 1 , $str , $item->Order_id ); # Order id
+								$sheet->setCellValueByColumnAndRow( 2 , $str , $field ); # Code
 								$sheet->setCellValueByColumnAndRow( 3 , $str , 'Фиксированная стоимость доставки' ); # Title
 								$sheet->setCellValueByColumnAndRow( 4 , $str , $item->order_shipment ); # Value
+								$sheet->setCellValueByColumnAndRow( 5 , $str , $id ); # Title
+								$str ++;
+								$Order_total_id++;
+								
 								break ;
 							case 'tax':
+								/*$sheet->setCellValueByColumnAndRow( 0 , $str , $Order_total_id ); # Order total id
+								$sheet->setCellValueByColumnAndRow( 1 , $str , $item->Order_id ); # Order id
+								$sheet->setCellValueByColumnAndRow( 2 , $str , $field ); # Code
 								$sheet->setCellValueByColumnAndRow( 3 , $str , 'НДС (20%)' ); # Title
 								$sheet->setCellValueByColumnAndRow( 4 , $str , $item->order_tax ); # Value
+								$sheet->setCellValueByColumnAndRow( 5 , $str , $id ); # Title
+								$str ++;
+								$Order_total_id++;*/
+								
 								break ;
 							case 'total':
+								$sheet->setCellValueByColumnAndRow( 0 , $str , $Order_total_id ); # Order total id
+								$sheet->setCellValueByColumnAndRow( 1 , $str , $item->Order_id ); # Order id
+								$sheet->setCellValueByColumnAndRow( 2 , $str , $field ); # Code
 								$sheet->setCellValueByColumnAndRow( 3 , $str , 'Итого' ); # Title
-								$sheet->setCellValueByColumnAndRow( 4 , $str , $item->order_total ); # Value
+								# $sheet->setCellValueByColumnAndRow( 4 , $str , $item->order_salesPrice ); # Value
+								$sheet->setCellValueByColumnAndRow( 4 , $str , ceil ($item->order_total) ); # Value
+								$sheet->setCellValueByColumnAndRow( 5 , $str , $id ); # Title
+								$str ++;
+								$Order_total_id++;
+								
 								break ;
-						}
-						$sheet->setCellValueByColumnAndRow( 5 , $str , $id ); # Title
+							case 'discounts':
+								
+								$Y =  $item->order_salesPrice - $item->order_total  ;
+								if( $Y > 0 ){
+									
+									$X  =  ($item->order_salesPrice / $Y )/100    ;
+									
+									$sheet->setCellValueByColumnAndRow( 0 , $str , $Order_total_id ); # Order total id
+									$sheet->setCellValueByColumnAndRow( 1 , $str , $item->Order_id ); # Order id
+									$sheet->setCellValueByColumnAndRow( 2 , $str , $field ); # Code
+									$sheet->setCellValueByColumnAndRow( 3 , $str , 'Накопительная скидка и скидка от суммы заказа ('.round($X).'%)' ); # Title
+									$sheet->setCellValueByColumnAndRow( 4 , $str , ceil($Y) ); # Value
+									$sheet->setCellValueByColumnAndRow( 5 , $str , $id ); # Title
+									$str ++;
+									$Order_total_id++;
+									
+									
+//									die(__FILE__ .' '. __LINE__ );
+									
+								}
+								
+								break;
+						}#END SWITCH
+						
 						
 					}
 					catch( \PHPExcel_Exception $e )
 					{
 					}
-					$str ++;
-					$Order_total_id++;
+					
 				}#END FOREACH
 				
+//				die(__FILE__ .' '. __LINE__ );
+				
 			}
+			
+			
+			
+			
 			
 //			echo'<pre>';print_r( $orders );echo'</pre>'.__FILE__.' '.__LINE__;
 //			die(__FILE__ .' '. __LINE__ );
