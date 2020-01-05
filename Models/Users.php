@@ -532,8 +532,8 @@
 				
 				if( $item->email == 'arkadijgulaev720@gmail.com' )
 				{
-					echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
-					die(__FILE__ .' '. __LINE__ );
+//					echo'<pre>';print_r( $item );echo'</pre>'.__FILE__.' '.__LINE__;
+//					die(__FILE__ .' '. __LINE__ );
 				}#END IF
 				
 				

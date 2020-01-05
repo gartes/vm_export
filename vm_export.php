@@ -75,19 +75,24 @@ class plgVmExtendedVm_export extends vmExtendedPlugin
 	}
 	
 	/**
+	 * Запуск эспорта покупателей для Open Cart
 	 * index.php?option=com_virtuemart&view=vm_export
-	 * 
+	 *
 	 * @param   string  $controller
 	 *
 	 * @return True|void
+	 * @throws Exception
+	 * @since 3.9
 	 */
 	public function onVmSiteController ($controller){
+		
+		if( $controller != 'vm_export' ) {
+			throw new Exception('Включен плагин VM_EXPORT - Запуск эспорта покупателей для Open Cart' , 1000500);
+		}  #END IF
 		
 		$Users = new \Plg\Vm_export\Models\Users();
 		$res = $Users->getUsers();
 		$Users->getExselList($res);
-		echo'<pre>';print_r( $controller );echo'</pre>'.__FILE__.' '.__LINE__;
-		die(__FILE__ .' '. __LINE__ );
 	}
 	
 	
